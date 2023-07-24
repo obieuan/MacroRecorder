@@ -20,6 +20,8 @@ _bgmode = 'light'
 
 _location = os.path.dirname(os.path.abspath(__file__))
 base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
+macros_folder = os.path.join(os.path.dirname(__file__), "macros")
+
 
 
 class Toplevel1:
@@ -302,13 +304,16 @@ class Toplevel1:
         self.BTN_Logo.configure(relief="flat")
 
 def start_recording(button_number):
-    recorder.record_macro(f"macros/macro_data_{button_number}.pkl")
+    #recorder.record_macro(f"macros/macro_data_{button_number}.pkl")
+    recorder.record_macro(os.path.join(macros_folder, f"macro_data_{button_number}.pkl"))
+
 
 def stop_recording():
     recorder.stop_recording()
 
 def start_playing(button_number):
-    player_thread = threading.Thread(target=player.play_macro, args=(f"macros/macro_data_{button_number}.pkl",))
+    #player_thread = threading.Thread(target=player.play_macro, args=(f"macros/macro_data_{button_number}.pkl",))
+    player_thread = threading.Thread(target=player.play_macro, args=(os.path.join(macros_folder, f"macro_data_{button_number}.pkl"),))
     player_thread.start()
 
 def stop_playing():
