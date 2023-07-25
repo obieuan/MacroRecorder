@@ -84,7 +84,7 @@ class Toplevel1:
         self.BTN_Play_1.configure(text='''Reproducir Grabación''')
 
 #Boton Stop 1 =============================================================
-        self.BTN_Stop_1 = tk.Button(self.Frame1, command=stop_recording)
+        self.BTN_Stop_1 = tk.Button(self.Frame1, command=on_stop_button_press)  # Bind the new function here
         self.BTN_Stop_1.place(x=60, y=10, height=50, width=60)
         self.BTN_Stop_1.configure(activebackground="beige")
         self.BTN_Stop_1.configure(activeforeground="black")
@@ -149,7 +149,7 @@ class Toplevel1:
         self.BTN_Play_2.configure(text='''Reproducir Grabación''')
 
 #Boton Stop 2 =============================================================
-        self.BTN_Stop_2 = tk.Button(self.Frame2, command=stop_recording)
+        self.BTN_Stop_2 = tk.Button(self.Frame2, command=on_stop_button_press)  # Bind the new function here
         self.BTN_Stop_2.place(x=60, y=10, height=50, width=60)
         self.BTN_Stop_2.configure(activebackground="beige")
         self.BTN_Stop_2.configure(activeforeground="black")
@@ -189,7 +189,7 @@ class Toplevel1:
         self.BTN_Record_3.configure(image=_img6)
         self.BTN_Record_3.configure(pady="0")
 #Boton Stop 3 =============================================================
-        self.BTN_Stop_3 = tk.Button(self.Frame3, command=stop_recording)
+        self.BTN_Stop_3 = tk.Button(self.Frame3, command=on_stop_button_press)  # Bind the new function here
         self.BTN_Stop_3.place(x=60, y=10, height=50, width=60)
         self.BTN_Stop_3.configure(activebackground="beige")
         self.BTN_Stop_3.configure(activeforeground="black")
@@ -249,7 +249,7 @@ class Toplevel1:
         self.BTN_Record_4.configure(pady="0")
 
 #Boton Stop 4 =============================================================
-        self.BTN_Stop_4 = tk.Button(self.Frame4, command=stop_recording)
+        self.BTN_Stop_4 = tk.Button(self.Frame4, command=on_stop_button_press)  # Bind the new function here
         self.BTN_Stop_4.place(x=60, y=10, height=50, width=60)
         self.BTN_Stop_4.configure(activebackground="beige")
         self.BTN_Stop_4.configure(activeforeground="black")
@@ -303,21 +303,23 @@ class Toplevel1:
         self.BTN_Logo.configure(pady="0")
         self.BTN_Logo.configure(relief="flat")
 
+# Function to start recording for a specific button
 def start_recording(button_number):
-    #recorder.record_macro(f"macros/macro_data_{button_number}.pkl")
-    recorder.record_macro(os.path.join(macros_folder, f"macro_data_{button_number}.pkl"))
+    recording_thread = threading.Thread(target=recorder.start_recording, args=(button_number,))
+    recording_thread.start()
 
-
+# Function to stop recording
 def stop_recording():
     recorder.stop_recording()
+
+# New function to handle the "Stop" button press
+def on_stop_button_press():
+    stop_recording()
 
 def start_playing(button_number):
     #player_thread = threading.Thread(target=player.play_macro, args=(f"macros/macro_data_{button_number}.pkl",))
     player_thread = threading.Thread(target=player.play_macro, args=(os.path.join(macros_folder, f"macro_data_{button_number}.pkl"),))
     player_thread.start()
-
-def stop_playing():
-    player.stop_playing()
 
 def clickURL():
     url = "https://starbot.mx/"  # Reemplaza esta URL con la que desees abrir
