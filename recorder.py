@@ -1,7 +1,7 @@
 # recorder.py
 import json
 import threading
-from pynput import mouse
+from pynput import mouse, keyboard
 
 # Global variable to store the recorded events
 recorded_events = []
@@ -24,16 +24,27 @@ def start_recording(button_number):
         event_data = {'type': 'move', 'x': x, 'y': y}
         recorded_events.append(event_data)
 
-    # Start the mouse listener
-    with mouse.Listener(on_click=on_click, on_move=on_move) as listener:
-        print(f"Recording macro {button_number}. Press 'Ctrl + C' or click 'Stop' to stop recording.")
-        stop_recording_event.clear()
+    def on_press(key):
         try:
-            # Keep the script running until the 'stop_recording_event' is set
-            while not stop_recording_event.is_set():
+            # Add the event data to the list
+            event_data = {'type': 'keypress', 'key': key.char}
+            recorded_events.append(event_data)
+        except AttributeError:
+            # Add the event data to the list
+            event_data = {'type': 'keypress', 'key': key.name}
+            recorded_events.append(event_data)
+
+    # Start the mouse and keyboard listeners
+    with mouse.Listener(on_click=on_click, on_move=on_move) as mouse_listener:
+        with keyboard.Listener(on_press=on_press) as keyboard_listener:
+            print(f"Recording macro {button_number}. Press 'Ctrl + C' or click 'Stop' to stop recording.")
+            stop_recording_event.clear()
+            try:
+                # Keep the script running until the 'stop_recording_event' is set
+                while not stop_recording_event.is_set():
+                    pass
+            except KeyboardInterrupt:
                 pass
-        except KeyboardInterrupt:
-            pass
 
     # Save the recorded events to a JSON file
     output_file = f"macros/macro_data_{button_number}.json"
