@@ -53,7 +53,7 @@
  [],
  False,
  False,
- 1690191820,
+ 1690285288,
  [('run.exe',
    'C:\\Users\\obieu\\AppData\\Roaming\\Python\\Python311\\site-packages\\PyInstaller\\bootloader\\Windows-64bit-intel\\run.exe',
    'EXECUTABLE')])
