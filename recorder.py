@@ -6,23 +6,29 @@ from pynput import mouse, keyboard
 # Global variable to store the recorded events
 recorded_events = []
 
+# Global variable to track the mouse button state
+mouse_button_pressed = False
+
 # Global variable to signal the recording process to stop
 stop_recording_event = threading.Event()
 
 # Function to start recording the mouse events
 def start_recording(button_number):
-    global recorded_events
+    global recorded_events, mouse_button_pressed
 
     def on_click(x, y, button, pressed):
-        if pressed:
-            # Add the event data to the list
-            event_data = {'type': 'click', 'x': x, 'y': y, 'button': button.name}
-            recorded_events.append(event_data)
+        global mouse_button_pressed
+        mouse_button_pressed = pressed
+
+        # Add the event data to the list
+        event_data = {'type': 'click', 'x': x, 'y': y, 'button': button.name, 'pressed': pressed}
+        recorded_events.append(event_data)
 
     def on_move(x, y):
-        # Add the event data to the list
-        event_data = {'type': 'move', 'x': x, 'y': y}
-        recorded_events.append(event_data)
+        if mouse_button_pressed:
+            # Add the event data to the list
+            event_data = {'type': 'move', 'x': x, 'y': y}
+            recorded_events.append(event_data)
 
     def on_press(key):
         try:

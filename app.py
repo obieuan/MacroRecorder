@@ -318,7 +318,7 @@ def on_stop_button_press():
 
 def start_playing(button_number):
     #player_thread = threading.Thread(target=player.play_macro, args=(f"macros/macro_data_{button_number}.pkl",))
-    player_thread = threading.Thread(target=player.play_macro, args=(os.path.join(macros_folder, f"macro_data_{button_number}.pkl"),))
+    player_thread = threading.Thread(target=player.run_macro_from_json, args=(os.path.join(macros_folder, f"macro_data_{button_number}.json"),))
     player_thread.start()
 
 def clickURL():

@@ -1,57 +1,37 @@
-import time
-import pickle
+import json
 import pyautogui
-import keyboard
-import threading
+import time
+import winput
 
-ralent = 0.002
-playing = False
+# Función para simular el movimiento del mouse
+def move_mouse(x, y):
+    pyautogui.moveTo(x, y, duration=0.5)
 
-def play_macro(file_name, delay=ralent):
-    global playing
-    with open(file_name, 'rb') as file:
-        macro_data = pickle.load(file)
+# Función para simular el clic del mouse
+def click(x, y, pressed):
+    pyautogui.moveTo(x, y, duration=0.1)
+    if pressed:
+        winput.press_mouse_button(winput.LEFT_MOUSE_BUTTON)
+    else:
+        winput.release_mouse_button(winput.LEFT_MOUSE_BUTTON)
 
-    print("Reproduciendo macro... (presiona 'F10' para detener)")
 
-    # Deshabilitar pausa y mensajes de espera para mejorar el rendimiento de pyautogui
-    pyautogui.PAUSE = ralent
-    pyautogui.FAILSAFE = False
+# Función para simular la presión de una tecla
+def press_key(key):
+    pyautogui.press(key)
 
-    playing = True
-    for x, y, keys_pressed in macro_data:
-        pyautogui.moveTo(x, y)
+# Función para leer el JSON y ejecutar las acciones
+def run_macro_from_json(file_path):
+    with open(file_path, 'r') as file:
+        macro_data = json.load(file)
 
-        # Simular las teclas presionadas durante el registro
-        for key in keys_pressed:
-            keyboard.press(key)
+    for action in macro_data:
+        if action['type'] == 'move':
+            move_mouse(action['x'], action['y'])
+        elif action['type'] == 'click':
+            click(action['x'], action['y'], action['pressed'])
+        elif action['type'] == 'keypress':
+            press_key(action['key'])
+        # Pausa de 0.1 segundos entre cada acción
+        time.sleep(0.1)
 
-        # Eliminar el tiempo de espera entre acciones
-        time.sleep(delay)
-
-        # Liberar las teclas al final
-        for key in keys_pressed:
-            keyboard.release(key)
-
-        if not playing:
-            break
-
-    print("Macro reproducida")
-
-def stop_playing():
-    global playing
-    playing = False
-
-def play_macro_wrapper():
-    # Iniciar la reproducción en un hilo separado para permitir la detección de la tecla 'F10'
-    player_thread = threading.Thread(target=play_macro, args=("macro_data.pkl",))
-    player_thread.start()
-
-    # Esperar a que el usuario presione 'F10' para detener la reproducción
-    while player_thread.is_alive():
-        if keyboard.is_pressed("F10"):
-            stop_playing()
-            break
-
-if __name__ == "__main__":
-    play_macro_wrapper()
