@@ -38,7 +38,15 @@ class Toplevel1:
         top.configure(highlightbackground="#000000")
         top.configure(highlightcolor="#80ff00")
 
+        
         self.top = top
+
+                # Key bindings for play buttons
+        top.bind('a', lambda event: start_playing(1))
+        top.bind('b', lambda event: start_playing(2))
+        top.bind('c', lambda event: start_playing(3))
+        top.bind('d', lambda event: start_playing(4))
+
 #Primer Recording =============================================================
         self.Frame1 = tk.Frame(self.top)
         self.Frame1.place(x=20, y=20, height=68, width=356)
